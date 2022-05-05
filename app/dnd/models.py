@@ -1,19 +1,27 @@
-from click import password_option
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 from django.core.validators import MaxValueValidator, MinValueValidator
 
 
+
 class Element(models.Model):
     name = models.CharField(max_length=32)
+
 
 class Effect(models.Model):
     name = models.CharField(max_length=64)
     elemental = models.BooleanField(default=False)
     conditional = models.BooleanField(default=False)
 
+
 class Condition(models.Model):
     name = models.CharField(max_length=32)
+    description = models.TextField(default='')
+
+
+class Dnd_Class(models.Model):
+    name = models.CharField(max_length=32)
+
 
 class Spell(models.Model):
 
@@ -44,9 +52,9 @@ class Spell(models.Model):
     range = models.IntegerField()
 
     #TODO V,S,M * 
-    components = models.CharField()
+    components = models.CharField(max_length=16)
 
-    #TODO instantaneous vs 1 round, vs 1 hour etc.
+    #TODO instantaneous vs 1 round, 1 minute, 10 minutes, 1 hour etc.
     duration = models.IntegerField()
 
     class SchoolType(models.TextChoices):
@@ -78,10 +86,10 @@ class Spell(models.Model):
         choices = SaveType.choices
     )
 
-    effect = models.ForeignKey(Effect)
+    effect = models.ForeignKey(Effect, on_delete=models.CASCADE)
     elements = models.ManyToManyField(Element)
-    conditions = models.ForeignKey(Condition)
+    conditions = models.ForeignKey(Condition, on_delete=models.CASCADE)
 
-    description = models.TextField()
+    description = models.TextField(default='')
         
-
+    classes = models.ManyToManyField(Dnd_Class)
