@@ -1,5 +1,3 @@
-from tkinter import ROUND
-from typing_extensions import Self
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 from django.core.validators import MaxValueValidator, MinValueValidator
@@ -91,7 +89,7 @@ class Spell(models.Model):
         ROUND = 'round', _('Round')
         MINUTE = 'minute', _('Minute')
         HOUR = 'hour', _('Hour')
-        DAY = 'day'. _('Day')
+        DAY = 'day', _('Day')
         SPECIAL = 'special', _('Special')
     
     duration_str = models.CharField(
