@@ -1,3 +1,5 @@
+from tkinter import ROUND
+from typing_extensions import Self
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 from django.core.validators import MaxValueValidator, MinValueValidator
@@ -9,9 +11,7 @@ class Element(models.Model):
 
 
 class Effect(models.Model):
-    name = models.CharField(max_length=64)
-    elemental = models.BooleanField(default=False)
-    conditional = models.BooleanField(default=False)
+    name = models.CharField(max_length=16)
 
 
 class Condition(models.Model):
@@ -23,39 +23,81 @@ class Dnd_Class(models.Model):
     name = models.CharField(max_length=32)
 
 
+class Spell_Component(models.Model):
+    name = models.CharField(max_length=16)
+
+
 class Spell(models.Model):
 
     name = models.CharField(max_length=256)
-    level = models.IntegerField(
+    level = models.PositiveSmallIntegerField(
         validators=[
             MaxValueValidator(9),
             MinValueValidator(0)
         ]
     )
 
-    #TODO needs to parse other into actual time?
-    class ActionType(models.TextChoices):
+    is_concentration = models.BooleanField(default=False)
+    is_ritual = models.BooleanField(default=False)
+
+    class CastTimeType(models.TextChoices):
         ACTION = 'action', _('Action')
         BONUS_ACTION = 'bonus', _('Bonus Action')
         REACTION = 'reaction', _('Reaction')
+        MINUTE = 'minute', _('1 Minute')
+        TEN_MINUTES = '10 minutes', _('10 Minutes')
+        HOUR = 'hour', _('1 Hour')
+        EIGHT_HOURS = '8 hours', _('8 Hours')
+        TWELVE_HOURS = '12 hours', _('12 Hours')
+        TWENTY_FOUR_HOURS = '24 hours', _('24 Hours')
         OTHER = 'other', _('other')
 
     casting_time = models.CharField(
-        max_length=8,
-        choices=ActionType.choices,
-        default=ActionType.ACTION,
+        max_length=16,
+        choices=CastTimeType.choices,
+        default=CastTimeType.ACTION,
     )
 
-    #TODO range(int, -1 self, 0 touch, otherwise range, need to account for fake infinite aka full plane) and real inf (everything)
-    #TODO area (int only)
-    #TODO area shape
-    range = models.IntegerField()
+    #TODO range: self, touch, in feet, in miles, sight, unlimited
+    range = models.PositiveIntegerField()
+    #TODO needs inf, measured in feet or miles
+    area = models.PositiveIntegerField()
 
-    #TODO V,S,M * 
-    components = models.CharField(max_length=16)
+    #alt + 0178 = ²
+    class ShapeType(models.TextChoices):
+        CONE = 'cone', _('Cone')
+        SPHERE = 'sphere', _('Sphere')
+        SQUARE = 'square', _('Square')
+        LINE = 'line', _('Line')
+        FEET2 = 'feet2', _('Feet²')
+        FLAT_SQUARE = 'flat_square', _('Flat Square')
+        CYLINDER = 'cylinder', _('cylinder')
 
-    #TODO instantaneous vs 1 round, 1 minute, 10 minutes, 1 hour etc.
-    duration = models.IntegerField()
+    area_shape = models.CharField(
+        max_length=16,
+        choices = ShapeType.choices,
+        blank=True,
+        null=True
+    )
+
+    components = models.ManyToManyField(Spell_Component)
+
+    #TODO instantaneous vs 1 round, 6 rounds, 1 minute, 10 minutes, 1 hour, 2 hours, 8 hours, 24 hours, 1 day, 7 days, 10 days, 30 days, special, 
+    #until dispelled, until dispelled or triggered
+    duration_num = models.PositiveIntegerField()
+    
+    class TimeType(models.TextChoices):
+        INSTANTANEOUS = 'instantaneous', _('Instantaneous')
+        ROUND = 'round', _('Round')
+        MINUTE = 'minute', _('Minute')
+        HOUR = 'hour', _('Hour')
+        DAY = 'day'. _('Day')
+        SPECIAL = 'special', _('Special')
+    
+    duration_str = models.CharField(
+        max_length=16,
+        choices = TimeType.choices
+    )
 
     class SchoolType(models.TextChoices):
         ABJURATION = 'abjuration', _('Abjuration')
@@ -72,23 +114,26 @@ class Spell(models.Model):
         choices = SchoolType.choices
     )
 
-    class SaveType(models.TextChoices):
+    class AttackSaveType(models.TextChoices):
         STR = 'str', _('STR')
         DEX = 'dex', _('DEX')
         CON = 'con', _('CON')
         INT = 'int', _('INT')
         WIS = 'wis', _('WIS')
         CHA = 'cha', _('CHA')
-        NONE = 'none', _('None')
+        MELEE = 'melee', _('Melee')
+        RANGED = 'ranged', _('Ranged')
 
     attack_save = models.CharField(
-        max_length=4,
-        choices = SaveType.choices
+        max_length=8,
+        choices = AttackSaveType.choices,
+        blank=True,
+        null=True
     )
 
-    effect = models.ForeignKey(Effect, on_delete=models.CASCADE)
-    elements = models.ManyToManyField(Element)
-    conditions = models.ForeignKey(Condition, on_delete=models.CASCADE)
+    effects = models.ManyToManyField(Effect)
+    elements = models.ManyToManyField(Element, blank=True)
+    conditions = models.ManyToManyField(Condition, blank=True)
 
     description = models.TextField(default='')
         

@@ -1,6 +1,6 @@
 from rest_framework import viewsets
-from dnd.models import Effect, Element, Condition, Dnd_Class
-from dnd.serializers import Dnd_ClassSerializer, ElementSerializer, EffectSerializer, ConditionSerializer
+from dnd.models import Effect, Element, Condition, Dnd_Class, Spell, Spell_Component
+from dnd.serializers import Dnd_ClassSerializer, ElementSerializer, EffectSerializer, ConditionSerializer, Spell_ComponentSerializer, SpellSerializer
 
 class ElementViewSet(viewsets.ModelViewSet):
     """
@@ -38,5 +38,25 @@ class Dnd_ClassViewSet(viewsets.ModelViewSet):
     """
     serializer_class = Dnd_ClassSerializer
     queryset = Dnd_Class.objects.all()
+    lookup_field = 'id'
+    pagination_class = None
+
+
+class Spell_ComponentViewSet(viewsets.ModelViewSet):
+    """
+    A viewset for viewing and editing spell component instances
+    """
+    serializer_class = Spell_ComponentSerializer
+    queryset = Spell_Component.objects.all()
+    lookup_field = 'id'
+    pagination_class = None
+
+
+class SpellViewSet(viewsets.ModelViewSet):
+    """
+    A viewset for viewing and editing spell instances
+    """
+    serializer_class = SpellSerializer
+    queryset = Spell.objects.all()
     lookup_field = 'id'
     pagination_class = None
