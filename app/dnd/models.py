@@ -57,9 +57,9 @@ class Spell(models.Model):
     )
 
     #TODO range: self, touch, in feet, in miles, sight, unlimited
-    range = models.PositiveIntegerField()
+    range = models.PositiveIntegerField(default=0)
     #TODO needs inf, measured in feet or miles
-    area = models.PositiveIntegerField()
+    area = models.PositiveIntegerField(default=0)
 
     #alt + 0178 = ²
     class ShapeType(models.TextChoices):
@@ -82,7 +82,7 @@ class Spell(models.Model):
 
     #TODO instantaneous vs 1 round, 6 rounds, 1 minute, 10 minutes, 1 hour, 2 hours, 8 hours, 24 hours, 1 day, 7 days, 10 days, 30 days, special, 
     #until dispelled, until dispelled or triggered
-    duration_num = models.PositiveIntegerField()
+    duration_num = models.PositiveIntegerField(default=0)
     
     class TimeType(models.TextChoices):
         INSTANTANEOUS = 'instantaneous', _('Instantaneous')
@@ -94,7 +94,8 @@ class Spell(models.Model):
     
     duration_str = models.CharField(
         max_length=16,
-        choices = TimeType.choices
+        choices = TimeType.choices,
+        default= TimeType.ROUND
     )
 
     class SchoolType(models.TextChoices):
