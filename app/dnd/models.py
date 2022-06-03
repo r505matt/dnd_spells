@@ -56,10 +56,34 @@ class Spell(models.Model):
         default=CastTimeType.ACTION,
     )
 
-    #TODO range: self, touch, in feet, in miles, sight, unlimited
-    range = models.PositiveIntegerField(default=0)
-    #TODO needs inf, measured in feet or miles
-    area = models.PositiveIntegerField(default=0)
+    range_num = models.PositiveIntegerField(default=0)
+
+    class RangeType(models.TextChoices):
+        SELF = 'self', _('Self')
+        TOUCH = 'touch', _('Touch')
+        FEET = 'feet', _('Feet')
+        MILES = 'miles', _('Miles')
+        SIGHT = 'sight', _('Sight')
+        UNLIMITED = 'unlimited', _('Unlimited')
+
+    range_str = models.CharField(
+        max_length=16,
+        choices=RangeType.choices,
+        default=RangeType.SELF
+    )
+    
+    area_num = models.PositiveIntegerField(default=0)
+
+    class AreaType(models.TextChoices):
+        FEET = 'feet', _('Feet')
+        MILES = 'miles', _('Miles')
+        INFINITY = 'infinity', _('Infinity')
+    
+    area_str = models.CharField(
+        max_length=16,
+        choices=AreaType.choices,
+        default=AreaType.FEET
+    )
 
     #alt + 0178 = ²
     class ShapeType(models.TextChoices):
@@ -69,7 +93,7 @@ class Spell(models.Model):
         LINE = 'line', _('Line')
         FEET2 = 'feet2', _('Feet²')
         FLAT_SQUARE = 'flat_square', _('Flat Square')
-        CYLINDER = 'cylinder', _('cylinder')
+        CYLINDER = 'cylinder', _('Cylinder')
 
     area_shape = models.CharField(
         max_length=16,
@@ -80,17 +104,17 @@ class Spell(models.Model):
 
     components = models.ManyToManyField(Spell_Component)
 
-    #TODO instantaneous vs 1 round, 6 rounds, 1 minute, 10 minutes, 1 hour, 2 hours, 8 hours, 24 hours, 1 day, 7 days, 10 days, 30 days, special, 
-    #until dispelled, until dispelled or triggered
     duration_num = models.PositiveIntegerField(default=0)
     
     class TimeType(models.TextChoices):
         INSTANTANEOUS = 'instantaneous', _('Instantaneous')
-        ROUND = 'round', _('Round')
-        MINUTE = 'minute', _('Minute')
-        HOUR = 'hour', _('Hour')
-        DAY = 'day', _('Day')
+        ROUNDS = 'rounds', _('Rounds')
+        MINUTES = 'minutes', _('Minutes')
+        HOURS = 'hours', _('Hours')
+        DAYS = 'days', _('Days')
         SPECIAL = 'special', _('Special')
+        UNTIL_DISPELLED = 'until_dispelled', _('Until Dispelled')
+        UNTIL_DISPELLED_OR_TRIGGERED = 'until_dispelled_or_triggered', _('Until Dispelled or Triggered')
     
     duration_str = models.CharField(
         max_length=16,

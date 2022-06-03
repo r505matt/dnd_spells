@@ -8,7 +8,7 @@ class ElementViewSet(viewsets.ModelViewSet):
     """
     serializer_class = ElementSerializer
     queryset = Element.objects.all()
-    lookup_field = 'id'
+    lookup_field = 'name'
     pagination_class = None
 
 
