@@ -77,7 +77,7 @@ class Spell(models.Model):
         null=True
     )
 
-    components = models.ManyToManyField(Spell_Component)
+    components = models.ManyToManyField(Spell_Component, related_name="components")
 
     duration = models.IntegerField(default=0)
 
@@ -114,7 +114,7 @@ class Spell(models.Model):
     )
 
     effects = models.ManyToManyField(Effect)
-    elements = models.ManyToManyField(Element, blank=True)
+    elements = models.ManyToManyField(Element, blank=True, related_name="elements")
     conditions = models.ManyToManyField(Condition, blank=True)
 
     description = models.TextField(default='')

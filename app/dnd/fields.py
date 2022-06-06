@@ -1,5 +1,4 @@
-from jsonschema import ValidationError
-from rest_framework.serializers import Field
+from rest_framework.serializers import Field, ValidationError
 
 RANGE_DICT = {
     -1: "Unlimited",
@@ -15,7 +14,6 @@ DURATION_DICT = {
     -3: "Special"
 }
 
-#TODO convert to numbers only. -1 = self, 0 = touch, then in feet. each mile is 5000 feet. codes for sight = -2, unlimited = -3
 class RangeField(Field):
 
     def to_representation(self, value):
@@ -29,7 +27,6 @@ class RangeField(Field):
     def to_internal_value(self, data):
         return super().to_internal_value(data)
 
-#TODO convert to nums, -1 for infinity, else in feet, each 5000 feet = mile
 class AreaField(Field):
     def to_representation(self, value):
         if value == -1:
@@ -42,8 +39,6 @@ class AreaField(Field):
     def to_internal_value(self, data):
         return super().to_internal_value(data)
 
-#TODO convert to nums, 0 = instant, -1 for UD, -2 for UDoT, -3 for special.
-#TODO else in rounds. 10 rounds = minute. 600 rounds = hour. days?14400?
 class DurationField(Field):
     def to_representation(self, value):
         if value < -3:

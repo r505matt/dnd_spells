@@ -52,11 +52,15 @@ class Spell_ComponentSerializer(serializers.ModelSerializer):
         ]
 
 class SpellSerializer(serializers.ModelSerializer):
-    elements = ElementSerializer(many=True, read_only=True)
-    effects = EffectSerializer(many=True, read_only=True)
-    conditions = ConditionSerializer(many=True, read_only=True)
-    classes = Dnd_ClassSerializer(many=True, read_only=True)
-    components = Spell_ComponentSerializer(many=True, read_only=True)
+    range = RangeField(source="spell.range")
+    area = AreaField(source="spell.area")
+    duration = DurationField(source="spell.duration")
+
+    elements = ElementSerializer(many=True, queryset=Element.objects.all())
+    effects = EffectSerializer(many=True)
+    conditions = ConditionSerializer(many=True)
+    classes = Dnd_ClassSerializer(many=True)
+    components = Spell_ComponentSerializer(many=True)
 
     class Meta:
         model = Spell
