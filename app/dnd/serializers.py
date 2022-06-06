@@ -52,10 +52,6 @@ class Spell_ComponentSerializer(serializers.ModelSerializer):
         ]
 
 class SpellSerializer(serializers.ModelSerializer):
-    spell_range_tuple = serializers.SerializerMethodField()
-    spell_range = RangeField(spell_range_tuple)
-
-
     elements = ElementSerializer(many=True, read_only=True)
     effects = EffectSerializer(many=True, read_only=True)
     conditions = ConditionSerializer(many=True, read_only=True)
@@ -71,11 +67,11 @@ class SpellSerializer(serializers.ModelSerializer):
             'is_concentration',
             'is_ritual',
             'casting_time',
-            'spell_range',
-            'spell_area',
+            'range',
+            'area',
             'area_shape',
             'components',
-            'spell_duration',
+            'duration',
             'school',
             'attack_save',
             'effects',
@@ -84,6 +80,3 @@ class SpellSerializer(serializers.ModelSerializer):
             'description',
             'classes'            
         ]
-
-    def get_spell_range_tuple(self, obj):
-        return (obj.range_num, obj.range_str)

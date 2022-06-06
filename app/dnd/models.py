@@ -56,34 +56,9 @@ class Spell(models.Model):
         default=CastTimeType.ACTION,
     )
 
-    range_num = models.PositiveIntegerField(default=0)
-
-    class RangeType(models.TextChoices):
-        SELF = 'self', _('Self')
-        TOUCH = 'touch', _('Touch')
-        FEET = 'feet', _('Feet')
-        MILES = 'miles', _('Miles')
-        SIGHT = 'sight', _('Sight')
-        UNLIMITED = 'unlimited', _('Unlimited')
-
-    range_str = models.CharField(
-        max_length=16,
-        choices=RangeType.choices,
-        default=RangeType.SELF
-    )
+    range = models.IntegerField(default=0)
     
-    area_num = models.PositiveIntegerField(default=0)
-
-    class AreaType(models.TextChoices):
-        FEET = 'feet', _('Feet')
-        MILES = 'miles', _('Miles')
-        INFINITY = 'infinity', _('Infinity')
-    
-    area_str = models.CharField(
-        max_length=16,
-        choices=AreaType.choices,
-        default=AreaType.FEET
-    )
+    area = models.IntegerField(default=0)
 
     #alt + 0178 = ²
     class ShapeType(models.TextChoices):
@@ -104,23 +79,7 @@ class Spell(models.Model):
 
     components = models.ManyToManyField(Spell_Component)
 
-    duration_num = models.PositiveIntegerField(default=0)
-    
-    class TimeType(models.TextChoices):
-        INSTANTANEOUS = 'instantaneous', _('Instantaneous')
-        ROUNDS = 'rounds', _('Rounds')
-        MINUTES = 'minutes', _('Minutes')
-        HOURS = 'hours', _('Hours')
-        DAYS = 'days', _('Days')
-        SPECIAL = 'special', _('Special')
-        UNTIL_DISPELLED = 'until_dispelled', _('Until Dispelled')
-        UNTIL_DISPELLED_OR_TRIGGERED = 'until_dispelled_or_triggered', _('Until Dispelled or Triggered')
-    
-    duration_str = models.CharField(
-        max_length=16,
-        choices = TimeType.choices,
-        default= TimeType.ROUND
-    )
+    duration = models.IntegerField(default=0)
 
     class SchoolType(models.TextChoices):
         ABJURATION = 'abjuration', _('Abjuration')
