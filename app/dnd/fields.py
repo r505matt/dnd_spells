@@ -1,4 +1,5 @@
-from rest_framework.serializers import Field, ValidationError
+from rest_framework.serializers import Field, ValidationError, ListField
+import json
 
 RANGE_DICT = {
     -1: "Unlimited",
@@ -77,3 +78,20 @@ def range_convert(value):
         return "%d Feet"%(value)
     else:
         return "%d Miles"%(value//5000)
+
+class TextInputListField(ListField):
+
+    def __init__(self, *args, **kwargs):
+        style = {'base_template': 'input.html'}
+        super().__init__(*args, style=style, **kwargs)
+
+    def get_value(self, dictionary):
+        value = super().get_value(dictionary)
+        is_querydict = hasattr(dictionary, 'getlist')
+        is_form = 'csrfmiddlewaretoken' in dictionary
+        if value and is_querydict and is_form:
+            try:
+                value = json.loads(value[0])
+            except Exception:
+                pass
+        return value
