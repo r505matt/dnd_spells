@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from dnd.models import Dnd_Class, Effect, Element, Condition, Spell, Spell_Component
-from dnd.fields import RangeField, AreaField, DurationField, TextInputListField
+from dnd.fields import RangeField, AreaField, DurationField, CastingTimeField
 
 
 class ElementSerializer(serializers.ModelSerializer):
@@ -42,6 +42,7 @@ class SpellSerializer(serializers.ModelSerializer):
     range = RangeField(source="spell.range")
     area = AreaField(source="spell.area")
     duration = DurationField(source="spell.duration")
+    casting_time = CastingTimeField(source="spell.casting_time")
 
     elements = ElementSerializer(many=True)
     effects = EffectSerializer(many=True)

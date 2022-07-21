@@ -1,5 +1,4 @@
-from rest_framework.serializers import Field, ValidationError, ListField
-import json
+from rest_framework.serializers import Field, ValidationError
 
 RANGE_DICT = {
     -1: "Unlimited",
@@ -66,6 +65,37 @@ class DurationField(Field):
     def to_internal_value(self, data):
         return super().to_internal_value(data)
 
+class CastingTimeField(Field):
+    def to_representation(self, value):
+        if value < 0:
+            raise ValidationError("Casting Time Out of Bounds")
+        elif value == 0:
+            return "Other"
+        elif value == 1:
+            return "Action"
+        elif value == 2:
+            return "Bonus Action"
+        elif value == 3:
+            return "Reaction"
+        elif value == 10:
+            return "1 Minute"
+        elif value == 100:
+            return "10 Minutes"
+        elif value == 600:
+            return "1 Hour"
+        elif value == 4800:
+            return "8 Hours"
+        elif value == 7200:
+            return "12 Hours"
+        elif value == 14400:
+            return "24 Hours"
+        else:
+            raise ValidationError("Casting Time Out of Bounds")
+
+    def to_internal_value(self, data):
+        
+        return super().to_internal_value(data)
+
 
 def range_convert(value):
     if value < 1:
@@ -79,19 +109,3 @@ def range_convert(value):
     else:
         return "%d Miles"%(value//5000)
 
-class TextInputListField(ListField):
-
-    def __init__(self, *args, **kwargs):
-        style = {'base_template': 'input.html'}
-        super().__init__(*args, style=style, **kwargs)
-
-    def get_value(self, dictionary):
-        value = super().get_value(dictionary)
-        is_querydict = hasattr(dictionary, 'getlist')
-        is_form = 'csrfmiddlewaretoken' in dictionary
-        if value and is_querydict and is_form:
-            try:
-                value = json.loads(value[0])
-            except Exception:
-                pass
-        return value

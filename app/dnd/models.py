@@ -38,23 +38,19 @@ class Spell(models.Model):
     is_concentration = models.BooleanField(default=False)
     is_ritual = models.BooleanField(default=False)
 
-    class CastTimeType(models.TextChoices):
-        ACTION = 'action', _('Action')
-        BONUS_ACTION = 'bonus', _('Bonus Action')
-        REACTION = 'reaction', _('Reaction')
-        MINUTE = 'minute', _('1 Minute')
-        TEN_MINUTES = '10 minutes', _('10 Minutes')
-        HOUR = 'hour', _('1 Hour')
-        EIGHT_HOURS = '8 hours', _('8 Hours')
-        TWELVE_HOURS = '12 hours', _('12 Hours')
-        TWENTY_FOUR_HOURS = '24 hours', _('24 Hours')
-        OTHER = 'other', _('other')
-
-    casting_time = models.CharField(
-        max_length=16,
-        choices=CastTimeType.choices,
-        default=CastTimeType.ACTION,
-    )
+    """class CastTimeType(models.TextChoices):
+        ACTION = 'action', _('Action')                  1
+        BONUS_ACTION = 'bonus', _('Bonus Action')       2
+        REACTION = 'reaction', _('Reaction')            3
+        MINUTE = 'minute', _('1 Minute')                10
+        TEN_MINUTES = '10 minutes', _('10 Minutes')     100
+        HOUR = 'hour', _('1 Hour')                      600
+        EIGHT_HOURS = '8 hours', _('8 Hours')           4800
+        TWELVE_HOURS = '12 hours', _('12 Hours')        7200
+        TWENTY_FOUR_HOURS = '24 hours', _('24 Hours')   14400
+        OTHER = 'other', _('other')                     0
+"""
+    casting_time = models.IntegerField(default=0)
 
     range = models.IntegerField(default=0)
     
