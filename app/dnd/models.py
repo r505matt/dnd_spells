@@ -61,6 +61,7 @@ class Spell(models.Model):
         CONE = 'cone', _('Cone')
         SPHERE = 'sphere', _('Sphere')
         SQUARE = 'square', _('Square')
+        CUBE = 'cube', _('Cube')
         LINE = 'line', _('Line')
         FEET2 = 'feet2', _('Feet²')
         FLAT_SQUARE = 'flat_square', _('Flat Square')
