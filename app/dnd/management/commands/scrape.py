@@ -1,11 +1,16 @@
 import requests
 import time
 import random
+import json
 from bs4 import BeautifulSoup
 from django.core.management.base import BaseCommand
-headers = {
-    'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/65.0.3325.181 Safari/537.36'
-}
+
+from dnd.management.helpers import get_random_ua, get_referrer
+from dnd.management.spells.spell import Spell
+
+#headers = {
+#    'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/65.0.3325.181 Safari/537.36'
+#}
 
 
 
@@ -14,24 +19,33 @@ class Command(BaseCommand):
     
     def handle(self, *args, **kwargs):
         
-        spell_list = ['hypnotic-pattern']
-        
-        #for page in range(1,2):
-        #    
-        #    URL = f"https://www.dndbeyond.com/spells?page={page}"
-        #    page = requests.get(URL, headers=headers)
-
-        #    soup = BeautifulSoup(page.content, "html.parser")
-        #    spell_list.extend([i['data-slug'] for i in soup.find_all('div', class_="info", data_slug_="")])
-        #    print(spell_list)
+        spell_list = ["fireball"]
+        """
+        for page in range(1,2):
             
-        #    seconds = random.uniform(3.5, 6.5)
-        #    time.sleep(seconds)
-        
+            URL = f"https://www.dndbeyond.com/spells?page={page}"
+            ua = get_random_ua()
+            ref = get_referrer(page)
+            headers = {'User-Agent' : ua, 'referer': ref}
 
-        print("\n\nStart\n\n")
+            page = requests.get(URL, headers=headers)
+
+            soup = BeautifulSoup(page.content, "html.parser")
+            spell_list.extend([i['data-slug'] for i in soup.find_all('div', class_="info", data_slug_="")])
+            print(spell_list)
+            
+            seconds = random.uniform(60, 120)
+            time.sleep(seconds)
+        """
+
+        #ignore = open("ignore.txt", "a")
+
         for spell_name in spell_list:
             URL = f"https://www.dndbeyond.com/spells/{spell_name}/more-info"
+
+            ua = get_random_ua()
+            ref = get_referrer(spell_name)
+            headers = {'User-Agent' : ua, 'referer': ref}
 
             page = requests.get(URL, headers=headers)
 
@@ -115,13 +129,29 @@ class Command(BaseCommand):
                 spell_classes.append(tag.get_text().strip())
 
             #TODO some spells actually have hyphen in them, and this converts all of them into spaces regardless
-            spell_name = ' '.join(spell_name.title().split('-'))
-
-            
+            spell_name = ' '.join(spell_name.title().split('-'))                      
                             
-            temp_shape = soup.find( class_ = "aoe-size" )
+            temp_shape = soup.find(class_ = "aoe-size" )
+            start = temp_shape.rfind("i-aoe-") + 6
+            spell_area_shape = temp_shape[start:start+4]
             
-
+            current = Spell(spell_name)
+            current.level = spell_level
+            current.concentration = spell_concentration
+            current.ritual = spell_ritual
+            current.casting_time = spell_casting_time
+            current.range = spell_range
+            current.area = spell_area
+            current.area_shape = spell_area_shape
+            current.components = spell_components
+            current.duration = spell_duration
+            current.school = spell_school
+            current.attack_save = spell_attack_save
+            current.damage_effect = spell_damage_effect
+            current.description = spell_description
+            current.tags = spell_tags
+            current.classes = spell_classes
+            """
             print(spell_name)
             print(spell_level)
             print(spell_concentration)
@@ -138,10 +168,12 @@ class Command(BaseCommand):
             print(spell_description)
             print(spell_tags)
             print(spell_classes)
+            """
             print("\n")
+            jsonSpell = json.dumps(current.__dict__)
+            print(jsonSpell)
 
-            print(temp_shape)
-
-            seconds = random.uniform(3.5, 6.5)
+            seconds = random.uniform(60, 120)
             time.sleep(seconds)
-            
+    
+        #ignore.close()
